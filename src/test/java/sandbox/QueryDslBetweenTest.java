@@ -45,10 +45,11 @@ public class QueryDslBetweenTest {
     @org.junit.Test
     public void between() throws Exception {
         final int constant = 10;
-
         final QMyTable m = QMyTable.myTable;
         final SimpleExpression<Boolean> operation = Expressions.operation(Boolean.class, Ops.BETWEEN,
                 Expressions.constant(constant), m.col1, m.col2);
+
+        // This yields: SELECT ID, COL1, COL2 FROM MYTABLE WHERE ((? BETWEEN COL1 AND COL2) = ?)
         final MyTable actual = new JPAQuery(em).from(m).where(operation.eq(true)).uniqueResult(m);
 
         assert actual != null;
