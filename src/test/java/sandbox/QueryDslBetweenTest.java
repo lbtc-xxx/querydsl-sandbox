@@ -1,8 +1,13 @@
 package sandbox;
 
+import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.support.Expressions;
+import com.mysema.query.types.Expression;
+import com.mysema.query.types.ExpressionUtils;
 import com.mysema.query.types.Ops;
+import com.mysema.query.types.Predicate;
+import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 import org.junit.After;
 import org.junit.Before;
@@ -43,7 +48,7 @@ public class QueryDslBetweenTest {
 
     // http://stackoverflow.com/a/7662029/3591946
     @org.junit.Test
-    public void between() throws Exception {
+    public void betweenRedundant() throws Exception {
         final int constant = 10;
         final QMyTable m = QMyTable.myTable;
         final SimpleExpression<Boolean> operation = Expressions.operation(Boolean.class, Ops.BETWEEN,
@@ -53,6 +58,23 @@ public class QueryDslBetweenTest {
         // SELECT ID, COL1, COL2 FROM MYTABLE WHERE ((? BETWEEN COL1 AND COL2) = ?)
         // bind => [10, true]
         final MyTable actual = new JPAQuery(em).from(m).where(operation.eq(true)).uniqueResult(m);
+
+        assert actual != null;
+        assertEquals(10, (int) actual.getCol1());
+        assertEquals(20, (int) actual.getCol2());
+    }
+
+    @org.junit.Test
+    public void betweenImproved() throws Exception {
+        final int constant = 10;
+        final QMyTable m = QMyTable.myTable;
+        final BooleanExpression operation = Expressions.booleanOperation(Ops.BETWEEN,
+                Expressions.constant(constant), m.col1, m.col2);
+
+        // This yields:
+        // SELECT ID, COL1, COL2 FROM MYTABLE WHERE (? BETWEEN COL1 AND COL2)
+        // bind => [10]
+        final MyTable actual = new JPAQuery(em).from(m).where(operation).uniqueResult(m);
 
         assert actual != null;
         assertEquals(10, (int) actual.getCol1());
