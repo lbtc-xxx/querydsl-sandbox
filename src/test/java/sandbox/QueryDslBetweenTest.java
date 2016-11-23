@@ -49,7 +49,9 @@ public class QueryDslBetweenTest {
         final SimpleExpression<Boolean> operation = Expressions.operation(Boolean.class, Ops.BETWEEN,
                 Expressions.constant(constant), m.col1, m.col2);
 
-        // This yields: SELECT ID, COL1, COL2 FROM MYTABLE WHERE ((? BETWEEN COL1 AND COL2) = ?)
+        // This yields:
+        // SELECT ID, COL1, COL2 FROM MYTABLE WHERE ((? BETWEEN COL1 AND COL2) = ?)
+        // bind => [10, true]
         final MyTable actual = new JPAQuery(em).from(m).where(operation.eq(true)).uniqueResult(m);
 
         assert actual != null;
