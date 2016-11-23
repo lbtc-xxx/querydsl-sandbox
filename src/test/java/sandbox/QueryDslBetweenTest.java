@@ -1,12 +1,8 @@
 package sandbox;
 
-import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.support.Expressions;
-import com.mysema.query.types.Expression;
-import com.mysema.query.types.ExpressionUtils;
 import com.mysema.query.types.Ops;
-import com.mysema.query.types.Predicate;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.expr.SimpleExpression;
 import org.junit.After;
